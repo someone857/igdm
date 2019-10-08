@@ -13,7 +13,7 @@ function renderMessage (message, direction, time, type) {
     placeholder: renderPlaceholderAsText,
   }
 
-  var div = dom(`<div class="message clearfix ${direction}"></div>`);
+  var div = dom(`<div class="message clearfix ${direction}" data-message-id="${message._params.id}"></div>`);
   var divContent = dom('<div class="content"></div>');
 
   if (direction === 'inward') {
@@ -156,7 +156,7 @@ function renderMessageAsLike (container) {
 function renderMessageAsText (container, message, noContext) {
   var text = typeof message === 'string' ? message : message._params.text;
   container.appendChild(document.createTextNode(text));
-  if (!noContext) container.oncontextmenu = () => renderContextMenu(text);
+  if (!noContext) container.oncontextmenu = () => renderContextMenu(message);
 }
 
 function linkUsernames (text) {
@@ -208,13 +208,19 @@ function renderMessageAsAnimatedMedia (container, message) {
   })
 }
 
-function renderContextMenu (text) {
+function renderContextMenu (message) {
+  var text = typeof message === 'string' ? message : message._params.text;
+  
   const menu = new Menu();
   const menuItem = new MenuItem({
     label: 'Quote Message',
     click: () => quoteText(text)
   });
   menu.append(menuItem);
+  menu.append(new MenuItem({
+    label: 'Like',
+    click: () => likeMessage(message)
+  }));
   menu.popup({});
 }
 
@@ -373,4 +379,9 @@ function renderUnfollowers (users) {
   })
 
   showInViewer(ul);
+}
+
+function likeMessage (message) {
+  // TODO
+  console.log(message);
 }
