@@ -383,5 +383,7 @@ function renderUnfollowers (users) {
 
 function likeMessage (message) {
   // TODO
-  console.log(message);
+  let messageId = message._params.id;
+  console.log(messageId);
+  like(messageId);
 }

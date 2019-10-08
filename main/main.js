@@ -253,4 +253,8 @@ electron.ipcMain.on('getDisplayPictureUrl', (_, userId) => {
   instagram.getUser(session, userId).then((user) => {
     mainWindow.webContents.send('getDisplayPictureUrl', { userId: userId, url: user._params.profilePicUrl });
   });
+})
+
+electron.ipcMain.on('like', (_, messageId) => {
+  instagram.like(session, messageId)
 });

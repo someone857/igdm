@@ -22,6 +22,10 @@ function unfollow (userId) {
   ipcRenderer.send('unfollow', userId);
 }
 
+function like (message) {
+  ipcRenderer.send('like', message);
+}
+
 function getDisplayPictureUrl (userId) {
   ipcRenderer.send('getDisplayPictureUrl', userId);
 }

@@ -167,3 +167,9 @@ exports.getUser = function (session, userId) {
     Client.Account.getById(session, userId).then(resolve).catch(reject);
   });
 }
+
+exports.like = function (session, messageId) {
+  Client.Like.create(session, messageId).then(a => {
+    console.log(a)
+  })
+}
