@@ -26,7 +26,7 @@ function renderMessage (message, direction, time, type) {
   if (!type && typeof message === 'string') type = 'text';
 
   if (renderers[type]) renderers[type](divContent, message);
-  else renderMessageAsText(divContent, `<unsupported message format: ${type}>`, true);
+  else renderUnsupportedMessage(divContent, message, type, direction, time);
 
   divContent.appendChild(dom(
     `<p class="message-time">${time ? formatTime(time) : 'Sending...'}</p>`)
@@ -133,7 +133,17 @@ function renderMessageAsImage (container, message) {
 }
 
 function renderMessageAsRavenImage (container, message) {
-  if (message._params.visualMedia && message._params.visualMedia.media.image_versions2) {
+  if (message._params.visualMedia && message._params.visualMedia.media.video_versions) {
+    container.classList.add('ig-media');
+    let url = message._params.visualMedia.media.video_versions[0].url;
+    let thumbUrl = message._params.visualMedia.media.image_versions2.candidates[0].url;
+
+    let vid = dom(`<video controls width='100%' src="${url}">`);
+    vid.onload = conditionedScrollToBottom();
+    container.appendChild(vid);
+
+    container.oncontextmenu = () => renderVideoContextMenu(thumbUrl, url);
+  } else if (message._params.visualMedia && message._params.visualMedia.media.image_versions2) {
     container.classList.add('ig-media');
     let url = message._params.visualMedia.media.image_versions2.candidates[0].url;
     let img = dom(`<img src="${url}">`);
@@ -145,7 +155,7 @@ function renderMessageAsRavenImage (container, message) {
     });
     container.oncontextmenu = () => renderImageContextMenu(url);
   } else {
-    renderMessageAsText(container, '<unsupported message format>', true);
+    renderUnsupportedMessage(container, message, 'raven_media');
   }
 }
 
@@ -215,6 +225,10 @@ function renderMessageAsAnimatedMedia (container, message) {
   });
 }
 
+function renderUnsupportedMessage (container, message, type=null, direction=null, time=null) {
+  renderMessageAsText(container, `<unsupported message format: ${type}>`, true);
+}
+
 function renderContextMenu (text) {
   const menu = new Menu();
   const menuItem = new MenuItem({
@@ -262,6 +276,19 @@ function createThumbnailDom (imageUrls) {
   });
   html += '</div>';
   return dom(html);
+}
+
+function renderVideoContextMenu (thumbUrl, videoUrl) {
+  const menu = new Menu();
+  menu.append(new MenuItem({
+    label: 'Copy thumbnail URL to clipboard',
+    click: () => copyToCliboard(thumbUrl)
+  }));
+  menu.append(new MenuItem({
+    label: 'Copy video URL to clipboard',
+    click: () => copyToCliboard(videoUrl)
+  }));
+  menu.popup({});
 }
 
 function renderChatListItem (chatTitle, msgPreview, thumbnail, id, direction) {
