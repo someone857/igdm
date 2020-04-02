@@ -25,8 +25,8 @@ let session;
 function createWindow () {
   if (!mainWindow) {
     mainWindow = new BrowserWindow({
-      width: 1200,
-      height: 800,
+      width: 500,
+      height: 400,
       icon: `${__dirname}/../browser/img/icon.png`,
       minWidth: 500,
       minHeight: 400
