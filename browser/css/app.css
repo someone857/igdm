@@ -153,6 +153,7 @@ button, button:focus {
   border-radius: 50%;
   background: rgb(22, 139, 249);
   color: #fff;
+  right: 7px;
 }
 
 @media (min-width: 576px)
