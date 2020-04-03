@@ -138,19 +138,19 @@ function renderMessageAsImage (container, message) {
 }
 
 function renderMessageAsRavenImage (container, message) {
-  if (message.visualMedia && message.visualMedia.media.image_versions2) {
+  if (message.visual_media && message.visual_media.media.video_versions) {
     container.classList.add('ig-media');
-    let url = message._params.visualMedia.media.video_versions[0].url;
-    let thumbUrl = message._params.visualMedia.media.image_versions2.candidates[0].url;
+    let url = message.visual_media.media.video_versions[0].url;
+    let thumbUrl = message.visual_media.media.image_versions2.candidates[0].url;
 
     let vid = dom(`<video controls width='100%' src="${url}">`);
     vid.onload = conditionedScrollToBottom();
     container.appendChild(vid);
 
     container.oncontextmenu = () => renderVideoContextMenu(thumbUrl, url);
-  } else if (message._params.visualMedia && message._params.visualMedia.media.image_versions2) {
+  } else if (message.visual_media && message.visual_media.media.image_versions2) {
     container.classList.add('ig-media');
-    let url = message.visualMedia.media.image_versions2.candidates[0].url;
+    let url = message.visual_media.media.image_versions2.candidates[0].url;
     let img = dom(`<img src="${url}">`);
     img.onload = conditionedScrollToBottom();
     container.appendChild(img);
