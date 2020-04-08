@@ -367,10 +367,7 @@ button, button:focus {
   display: block;
   margin: 0 auto;
   height: 100vh;
-}
-
-.viewer .content img {
-  max-width: 55%;
+  max-width: 100vw;
 }
 
 .viewer button.close {
