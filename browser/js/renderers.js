@@ -3,7 +3,7 @@ function renderMessage (message, direction, time, type) {
     media_share: renderMessageAsPost,
     text: renderMessageAsText,
     like: renderMessageAsLike,
-    media: renderMessageAsImage,
+    media: renderMessageAsMedia,
     raven_media: renderMessageAsRavenImage,
     reel_share: renderMessageAsUserStory, // replying to a user's story
     link: renderMessageAsLink,
@@ -124,23 +124,41 @@ function renderMessageAsUserStory (container, message) {
   }
 }
 
-function renderMessageAsImage (container, message) {
-  let url = typeof message === 'string' ? message : message.media.image_versions2.candidates[0].url;
-  let img = dom(`<img class="chat-image" src="${url}">`);
-  img.onload = conditionedScrollToBottom();
-  container.appendChild(img);
-  container.classList.add('ig-media');
+function renderMessageAsMedia (container, message) {
+  if (message.media && message.media.video_versions) {
+    let bestMedia = message.media.video_versions.reduce((prev, curr) => (prev.height > curr.height) ? prev : curr);
+    let url = bestMedia.url;
+    let thumbUrl = message.media.image_versions2.candidates[0].url;
+    let thumbImg = dom(`<img class="chat-image image-with-vid" src="${thumbUrl}">`);
+    thumbImg.onload = conditionedScrollToBottom();
+    container.appendChild(thumbImg);
+    container.classList.add('ig-media');
 
-  container.addEventListener('click', () => {
-    showInViewer(dom(`<img src="${url}">`));
-  });
-  container.oncontextmenu = () => renderImageContextMenu(url);
+    container.addEventListener('click', () => {
+      showInViewer(dom(`<video controls width='100%' src="${url}">`));
+    });
+    container.oncontextmenu = () => renderVideoContextMenu(thumbUrl, url);
+  } else if (message.media && message.media.image_versions2) {
+    let url = typeof message === 'string' ? message : message.media.image_versions2.candidates[0].url;
+    let img = dom(`<img class="chat-image" src="${url}">`);
+    img.onload = conditionedScrollToBottom();
+    container.appendChild(img);
+    container.classList.add('ig-media');
+
+    container.addEventListener('click', () => {
+      showInViewer(dom(`<img src="${url}">`));
+    });
+    container.oncontextmenu = () => renderImageContextMenu(url);
+  } else {
+    renderUnsupportedMessage(container, message, 'media');
+  }
 }
 
 function renderMessageAsRavenImage (container, message) {
   if (message.visual_media && message.visual_media.media.video_versions) {
     container.classList.add('ig-media');
-    let url = message.visual_media.media.video_versions[0].url;
+    let bestMedia = message.visual_media.media.video_versions.reduce((prev, curr) => (prev.height > curr.height) ? prev : curr);
+    let url = bestMedia.url;
     let thumbUrl = message.visual_media.media.image_versions2.candidates[0].url;
 
     let vid = dom(`<video controls width='100%' src="${url}">`);
