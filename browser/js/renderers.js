@@ -129,13 +129,13 @@ function renderMessageAsMedia (container, message) {
     let bestMedia = message.media.video_versions.reduce((prev, curr) => (prev.height > curr.height) ? prev : curr);
     let url = bestMedia.url;
     let thumbUrl = message.media.image_versions2.candidates[0].url;
-    let thumbImg = dom(`<img class="chat-image image-with-vid" src="${thumbUrl}">`);
+    let thumbImg = dom(`<div class="container-thumb-with-vid"><img class="chat-image" src="${thumbUrl}"></div>`);
     thumbImg.onload = conditionedScrollToBottom();
     container.appendChild(thumbImg);
     container.classList.add('ig-media');
 
     container.addEventListener('click', () => {
-      showInViewer(dom(`<video controls width='100%' src="${url}">`));
+      showInViewer(dom(`<video controls src="${url}">`));
     });
     container.oncontextmenu = () => renderVideoContextMenu(thumbUrl, url);
   } else if (message.media && message.media.image_versions2) {
@@ -160,11 +160,14 @@ function renderMessageAsRavenImage (container, message) {
     let bestMedia = message.visual_media.media.video_versions.reduce((prev, curr) => (prev.height > curr.height) ? prev : curr);
     let url = bestMedia.url;
     let thumbUrl = message.visual_media.media.image_versions2.candidates[0].url;
+    let thumbImg = dom(`<div class="container-thumb-with-vid"><img class="chat-image" src="${thumbUrl}"></div>`);
+    thumbImg.onload = conditionedScrollToBottom();
+    container.appendChild(thumbImg);
+    container.classList.add('ig-media');
 
-    let vid = dom(`<video controls width='100%' src="${url}">`);
-    vid.onload = conditionedScrollToBottom();
-    container.appendChild(vid);
-
+    container.addEventListener('click', () => {
+      showInViewer(dom(`<video controls src="${url}">`));
+    });
     container.oncontextmenu = () => renderVideoContextMenu(thumbUrl, url);
   } else if (message.visual_media && message.visual_media.media.image_versions2) {
     container.classList.add('ig-media');
