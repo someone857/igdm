@@ -352,6 +352,7 @@ button, button:focus {
 .viewer .content img, .viewer .content video {
   display: block;
   margin: 0 auto;
+  height: 100vh;
 }
 
 .viewer .content img {
