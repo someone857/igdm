@@ -299,7 +299,7 @@ function renderVideoContextMenu (videoUrl) {
   menu.popup({});
 }
 
-function renderChatListItem (chatTitle, msgPreview, thumbnail, id, direction) {
+function renderChatListItem (chatTitle, msgPreview, thumbnail, id, direction, timestamp) {
   let li = document.createElement('li');
   li.classList.add('col-12', 'p-3');
 
@@ -307,7 +307,7 @@ function renderChatListItem (chatTitle, msgPreview, thumbnail, id, direction) {
 
   li.appendChild(createThumbnailDom(thumbnail));
 
-  li.appendChild(dom(`<div class="username ml-3 d-none d-sm-inline-block"><b>${chatTitle}</b><br><span class="${msgPreviewClass}">${msgPreview}</span></div>`));
+  li.appendChild(dom(`<div class="username ml-3 d-none d-sm-inline-block"><b>${chatTitle}</b><br><span class="${msgPreviewClass}">${msgPreview}</span>${renderMessageTimeAgo(timestamp)}</div>`));
   if (id) li.setAttribute('id', `chatlist-${id}`);
 
   return li;
@@ -340,7 +340,7 @@ function renderChatList (chatList) {
     let chatTitle = getChatTitle(chat_);
     const direction = getMsgDirection(lastValidItem);
     let thumbnail = getChatThumbnail(chat_);
-    let li = renderChatListItem(chatTitle, msgPreview, thumbnail, chat_.thread_id, direction);
+    let li = renderChatListItem(chatTitle, msgPreview, thumbnail, chat_.thread_id, direction, lastValidItem.timestamp);
 
     registerChatUser(chat_);
     if (isActive(chat_)) setActive(li);
@@ -483,4 +483,11 @@ function renderEmptyChat () {
   chatArea.innerHTML = '<div class="center cover"><img src="img/icon.png" width="300px"><p class="italic">Search and select a chat to start.</p></div>';
   let chatTitle = document.querySelector(CHAT_TITLE_SELECTOR);
   chatTitle.innerHTML = '';
+}
+
+function renderMessageTimeAgo (igTimestamp) {
+  if (!igTimestamp) return '';
+  let jsTimestamp = timestampToDate(igTimestamp);
+  let msgTimeSince = getMsgTimeSince(igTimestamp);
+  return `<time class="date" data-time="${igTimestamp}" title="${jsTimestamp}">${msgTimeSince}</time>`;
 }

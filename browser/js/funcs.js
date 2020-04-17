@@ -1,3 +1,10 @@
+const TimeAgo = require('javascript-time-ago');
+const en = require('javascript-time-ago/locale/en');
+const { canonical } = require('javascript-time-ago/gradation');
+
+TimeAgo.addLocale(en);
+const timeAgo = new TimeAgo('en-US');
+
 function openInBrowser (url) {
   electron.shell.openExternal(url);
 }
@@ -113,6 +120,24 @@ function canRenderOlderMessages (chatId) {
 function getMsgPreview (item) {
   let msgPreview = item.text || item.like || 'Media message';
   return truncate(msgPreview, 25);
+}
+
+function getMsgTimeSince (igTimestamp) {
+  let timestamp = timestampToDate(igTimestamp);
+  return timeAgo.format(timestamp, {
+    'flavour': 'tiny',
+    'gradation': canonical,
+    'units': ['now', 'second', 'minute', 'hour', 'day', 'week'] // "now" unlikely to be displayed - only this is called within 1s from the original date
+  });
+}
+
+function timestampToDate (timestamp) {
+  try {
+    // timestamp is usually micro-seconds with 16 digits
+    return new Date(parseInt(timestamp.toString().slice(0, 13)));
+  } catch (error) {
+    return null;
+  }
 }
 
 function isActive (chat_) {

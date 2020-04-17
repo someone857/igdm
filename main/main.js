@@ -204,11 +204,13 @@ app.on('activate', () => {
 // reduce polling frequency when app is not active.
 app.on('browser-window-blur', () => {
   pollingInterval = 30000;
+  mainWindow.webContents.send('updatePollingInterval', pollingInterval);
 });
 
 app.on('browser-window-focus', () => {
   pollingInterval = 10000;
   app.setBadgeCount(0);
+  mainWindow.webContents.send('updatePollingInterval', pollingInterval);
 });
 
 electron.ipcMain.on('login', (evt, data) => {
