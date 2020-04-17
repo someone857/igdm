@@ -1,3 +1,8 @@
+const TimeAgo = require('javascript-time-ago');
+const en = require('javascript-time-ago/locale/en');
+TimeAgo.addLocale(en);
+const timeAgo = new TimeAgo('en-US');
+
 function openInBrowser (url) {
   electron.shell.openExternal(url);
 }
@@ -107,9 +112,26 @@ function canRenderOlderMessages (chatId) {
   return chatId === window.currentChatId;
 }
 
-function getMsgPreview (chat_) {
-  let msgPreview = chat_.items[0].text || 'Media message';
+function getMsgPreview (item) {
+  let msgPreview = item.text || item.like || 'Media message';
   return truncate(msgPreview, 25);
+}
+
+function getMsgTimeSince (item) {
+  if (!item.timestamp) {
+    return '';
+  }
+  let timestamp = timestampToDate(item.timestamp);
+  return timeAgo.format(timestamp, 'twitter');
+}
+
+function timestampToDate (timestamp) {
+  try {
+    // timestamp is usually micro-seconds with 16 digits
+    return new Date(parseInt(timestamp.toString().slice(0, 13)));
+  } catch (error) {
+    return null;
+  }
 }
 
 function isActive (chat_) {
@@ -202,12 +224,14 @@ function addNotification (el, chat_) {
     return;
   }
 
+  let lastValidItem = chat_.items.find(e => !e.hide_in_thread) || chat_.items[0];
+
   const isNew = (
     (window.chatListHash[chat_.thread_id] &&
       window.chatListHash[chat_.thread_id].items[0].item_id !== chat_.items[0].item_id) ||
     (chat_.last_seen_at &&
       chat_.last_seen_at[window.loggedInUserId] &&
-      chat_.items[0].item_id != chat_.last_seen_at[window.loggedInUserId].item_id
+      lastValidItem.timestamp > chat_.last_seen_at[window.loggedInUserId].timestamp
     ));
   if (isNew) {
     unreadChats[chat_.thread_id] = chat_;
