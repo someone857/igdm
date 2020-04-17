@@ -335,10 +335,11 @@ function renderChatList (chatList) {
   let ul = document.querySelector('.chat-list ul');
   ul.innerHTML = '';
   chatList.forEach((chat_) => {
-    let msgPreview = getMsgPreview(chat_);
-    let msgTimeSince = getMsgTimeSince(chat_.items[0]);
+    let lastValidItem = chat_.items.find(e => !e.hide_in_thread) || chat_.items[0];
+    let msgPreview = getMsgPreview(lastValidItem);
+    let msgTimeSince = getMsgTimeSince(lastValidItem);
     let chatTitle = getChatTitle(chat_);
-    const direction = getMsgDirection(chat_.items[0]);
+    const direction = getMsgDirection(lastValidItem);
     let thumbnail = getChatThumbnail(chat_);
     let li = renderChatListItem(chatTitle, msgPreview, msgTimeSince, thumbnail, chat_.thread_id, direction);
 
