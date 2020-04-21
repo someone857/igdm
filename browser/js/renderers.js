@@ -157,14 +157,14 @@ function renderImageOrVideo (container, media) {
     let bestVideo = media.video_versions.reduce((prev, curr) => (prev.height > curr.height) ? prev : curr);
 
     container.addEventListener('click', () => {
-      showInViewer(dom(`<video controls src="${bestVideo.url}">`));
+      showInViewer(dom(`<video class="full-screen" controls src="${bestVideo.url}">`));
     });
     container.oncontextmenu = () => renderVideoContextMenu(bestVideo.url);
   } else {
     container.appendChild(bestImgDom);
 
     container.addEventListener('click', () => {
-      showInViewer(dom(`<img src="${bestImg.url}">`));
+      showInViewer(dom(`<img class="full-screen" src="${bestImg.url}">`));
     });
     container.oncontextmenu = () => renderImageContextMenu(bestImg.url);
   }
@@ -367,15 +367,21 @@ function renderChatList (chatList) {
   });
 }
 
+function getLastSeenText (formatedTime) {
+  if (formatedTime) {
+    return `Last seen ${formatedTime}`;
+  }
+  return '--';
+}
+
 function renderChatHeader (chat_) {
   let chatTitle = (chat_.thread_id ? getChatTitle(chat_) : getUsernames(chat_)); // if chat_.thread_id is not defined, it is a new contact
-  
-  if (Object.prototype.hasOwnProperty.call(chat_, 'presence')) {
-    let timeFormat = chat_.presence.is_active? 'Active now' : `Last seen ${formatTime(chat_.presence.last_activity_at_ms)}`;
 
+  if (Object.prototype.hasOwnProperty.call(chat_, 'presence')) {
+    let timeFormat = chat_.presence.isActive? '<span class="active"> &#9679;</span> Active now' : `${getLastSeenText(formatTime(chat_.presence.last_activity_at_ms))}`;
     b = document.createElement('div');
     b.appendChild(dom(`<b class="ml-2">${chatTitle}</b>`));
-    b.appendChild(dom(`<p class="ml-2">${timeFormat}</b>`));
+    b.appendChild(dom(`<p class="ml-2 chat-subtitle">${timeFormat}</b>`));
   } else {
     b = dom(`<b class="ml-2 mt-2">${chatTitle}</b>`);
   }

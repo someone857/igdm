@@ -16,6 +16,9 @@ function format (number) {
 }
 
 function formatTime (unixTime) {
+  if (unixTime == null) {
+    return;
+  }
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   let date = new Date(parseInt(unixTime.toString().slice(0, 13)));
