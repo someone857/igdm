@@ -1,3 +1,5 @@
+let pollingInterval = 10000;
+
 function getLoggedInUser () {
   ipcRenderer.send('getLoggedInUser');
 }
@@ -34,6 +36,17 @@ function getDisplayPictureUrl (userId) {
 function closeModalViewer () {
   document.querySelector('.viewer').classList.remove('active');
   document.querySelectorAll('.viewer .content')[0].innerHTML = '';
+}
+
+function updateDates () {
+  setTimeout(updateDates, pollingInterval);
+  let elements = document.querySelectorAll('time[data-time]');
+  if (!elements) return;
+  Array.prototype.forEach.call(elements, function (entry) {
+    let igTime = entry.dataset.time;
+    if (!igTime) return;
+    entry.textContent = getMsgTimeSince(igTime);
+  });
 }
 
 //Disable Drag and Drop on Electrum
@@ -198,4 +211,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   getLoggedInUser();
   getChatList();
+
+  ipcRenderer.on('updatePollingInterval', (_, interval) => {
+    pollingInterval = interval;
+  });
+  setTimeout(updateDates, pollingInterval);
 });

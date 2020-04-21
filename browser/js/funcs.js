@@ -1,5 +1,7 @@
 const TimeAgo = require('javascript-time-ago');
 const en = require('javascript-time-ago/locale/en');
+const { canonical } = require('javascript-time-ago/gradation');
+
 TimeAgo.addLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
@@ -120,12 +122,13 @@ function getMsgPreview (item) {
   return truncate(msgPreview, 25);
 }
 
-function getMsgTimeSince (item) {
-  if (!item.timestamp) {
-    return '';
-  }
-  let timestamp = timestampToDate(item.timestamp);
-  return timeAgo.format(timestamp, 'twitter');
+function getMsgTimeSince (igTimestamp) {
+  let timestamp = timestampToDate(igTimestamp);
+  return timeAgo.format(timestamp, {
+    'flavour': 'tiny',
+    'gradation': canonical,
+    'units': ['now', 'second', 'minute', 'hour', 'day', 'week'] // "now" unlikely to be displayed - only this is called within 1s from the original date
+  });
 }
 
 function timestampToDate (timestamp) {
