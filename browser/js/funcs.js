@@ -249,7 +249,7 @@ function addNotification (el, chat_) {
     return;
   }
 
-  let lastValidItem = chat_.items.find(e => !e.hide_in_thread) || chat_.items[0];
+  let lastValidItem = getLastDisplayableItem(chat_.items);
 
   const isNew = (
     (window.chatListHash[chat_.thread_id] &&
@@ -280,7 +280,7 @@ function notify (message, noBadgeCountIncrease) {
   if (!noBadgeCountIncrease) {
     ipcRenderer.send('increase-badge-count');
   }
-  const notification = new Notification('IG:dm Desktop', {
+  const notification = new Notification('IGdm Desktop', {
     body: message
   });
 
@@ -355,18 +355,6 @@ function downloadFile (urlOfFile) {
   document.body.appendChild(element);
   element.click();
   document.body.removeChild(element);
-}
-
-function getHTMLElement (media) {
-  let mediaContent;
-  if (media.video_versions) {
-    mediaContent = `<video width="${media.video_versions[0].width}" controls>
-      <source src="${media.video_versions[0].url}" type="video/mp4">
-    </video>`;
-  } else {
-    mediaContent = `<img src="${media.image_versions2[0].url}">`;
-  }
-  return mediaContent;
 }
 
 function animateChatDelete (chatId) {
@@ -445,4 +433,9 @@ function createSendingMessage (message, type, trackerKey) {
     timestamp: undefined,
     trackerKey
   };
+}
+
+
+function getLastDisplayableItem (items) {
+  return items.find(e => !e.hide_in_thread) || items[0];
 }
