@@ -304,7 +304,14 @@ function renderChatListItem (chatTitle, msgPreview, thumbnail, id, direction, ti
 
   li.appendChild(createThumbnailDom(thumbnail));
 
-  li.appendChild(dom(`<div class="username ml-3 d-none d-sm-inline-block"><b>${chatTitle}</b><br><span class="${msgPreviewClass}">${msgPreview}</span>${renderMessageTimeAgo(timestamp)}</div>`));
+  li.appendChild(dom(
+    `<div class="username ml-3 d-none d-sm-inline-block">
+      ${renderMessageTimeAgo(timestamp)}
+      <b>${chatTitle}</b><br>
+      <span class="${msgPreviewClass}">${msgPreview}</span>
+    </div>`
+  ));
+
   if (id) li.setAttribute('id', `chatlist-${id}`);
 
   return li;

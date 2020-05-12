@@ -39,7 +39,6 @@ function closeModalViewer () {
 }
 
 function updateDates () {
-  setTimeout(updateDates, pollingInterval);
   let elements = document.querySelectorAll('time[data-time]');
   if (!elements) return;
   Array.prototype.forEach.call(elements, function (entry) {
@@ -74,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.chats = chats_;
       renderChatList(window.chats);
     }
+    updateDates();
   });
 
   ipcRenderer.on('deletedChat', (evt, chatId) => {
