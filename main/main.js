@@ -202,8 +202,8 @@ app.on('activate', () => {
 
 // reduce polling frequency when app is not active.
 app.on('browser-window-blur', () => {
-  pollingInterval = 30000;
-  mainWindow.webContents.send('updatePollingInterval', pollingInterval);
+  // pollingInterval = 30000;
+  // mainWindow.webContents.send('updatePollingInterval', pollingInterval);
 });
 
 app.on('browser-window-focus', () => {
